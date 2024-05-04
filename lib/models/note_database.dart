@@ -51,4 +51,12 @@ class NoteDatabase extends ChangeNotifier {
     await isar.writeTxn(() => isar.notes.delete(id));
     await fetchNotes();
   }
+
+  Future<void> searchNotes(String query) async {
+    List<Note> searedNotes = await isar.notes.filter().textContains(query).findAll();
+
+    currentNotes.clear();
+    currentNotes.addAll(searedNotes);
+    notifyListeners(); // extends ChangeNotifier 를 넣어야 합니다.
+  }
 }

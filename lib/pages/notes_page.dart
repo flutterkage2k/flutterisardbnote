@@ -17,11 +17,19 @@ class NotesPage extends StatefulWidget {
 class _NotesPageState extends State<NotesPage> {
   //text controller to access what the user typed
   final textController = TextEditingController();
+  final searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     readNotes();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    textController.dispose();
+    searchController.dispose();
   }
 
   // create a note
@@ -54,6 +62,10 @@ class _NotesPageState extends State<NotesPage> {
   // read
   void readNotes() {
     context.read<NoteDatabase>().fetchNotes();
+  }
+
+  void searchedNotes(String query) {
+    context.read<NoteDatabase>().searchNotes(query);
   }
 
   // update
@@ -129,6 +141,25 @@ class _NotesPageState extends State<NotesPage> {
                 fontSize: 48,
                 color: Theme.of(context).colorScheme.inversePrimary,
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(25.0),
+            child: TextField(
+              controller: searchController,
+              onChanged: searchedNotes,
+              decoration: InputDecoration(
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  prefixIcon: Icon(Icons.search),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      searchController.clear();
+                      readNotes();
+                    },
+                    icon: const Icon(Icons.cancel),
+                  )),
             ),
           ),
 
